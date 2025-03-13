@@ -26,7 +26,7 @@ jobs:
       matrix:
         include:
           - branch: ${{ github.base_ref }}
-            artifact: target-branch
+            artifact: main
           - branch: ${{ github.head_ref }}
             artifact: pull-request
 
@@ -71,7 +71,7 @@ jobs:
           path: coverage
       - uses: actions/download-artifact@v4
         with:
-          name: coverage-target-branch
+          name: coverage-main
           path: coverage-main
       - name: "Report Coverage"
         uses: davelosert/vitest-coverage-report-action@v2
