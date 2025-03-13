@@ -1,0 +1,71 @@
+name: analyses
+
+on:
+  pull_request:
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: npm install
+      - name: Cache node modules
+        id: save_node_module_cache
+        uses: actions/cache/save@v4
+        with:
+          path: node_modules
+          key: ${{ github.sha }}
+  unit_tests:
+    needs: install
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - branch: ${{ github.base_ref }}
+            artifact: target-branch
+          - branch: ${{ github.head_ref }}
+            artifact: pull-request
+
+    permissions:
+      contents: read
+      deployments: read
+      actions: read
+      checks: read
+      repository-projects: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
+          ## Set repository to correctly checkout from forks
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+      - name: "Install Node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+      - name: "Install Deps"
+        run: npm install
+      - name: "Test"
+        run: npx vitest --coverage.enabled true
+      - name: "Upload Coverage"
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.artifact }}
+          path: coverage
+  report-coverage:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Download Coverage Artifacts"
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-pull-request
+          path: coverage
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage-main
+          path: coverage-main
+      - name: "Report Coverage"
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          json-summary-compare-path: coverage-main/coverage-summary.js
