@@ -71,7 +71,7 @@ jobs:
           path: coverage
       - uses: actions/download-artifact@v4
         with:
-          name: coverage-main
+          name: coverage-target-branch
           path: coverage-main
       - name: "Report Coverage"
         uses: davelosert/vitest-coverage-report-action@v2
