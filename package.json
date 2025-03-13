@@ -8,10 +8,12 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "install": "^0.13.0",
     "next": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@testing-library/react": "14.1.2",
@@ -23,5 +25,8 @@
     "jsdom": "^23.0.1",
     "typescript": "5.3.3",
     "vitest": "^3.0.8"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.35.0"
   }
 }
